@@ -3,11 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
+
 [ProducesResponseType(400)]
 [ProducesResponseType(500)]
-public class FlightController : ControllerBase
+public class FlightController : BaseApiController
 {
         static Random random = new Random();
 
