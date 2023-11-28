@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlightService } from '../api/services';
 import { Flight } from '../api/models';
+import { AuthService } from '../_auth/auth.service';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-book-flight',
@@ -16,17 +18,37 @@ export class BookFlightComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private flightService: FlightService
+    private flightService: FlightService,
+    private authService: AuthService,
+    private fb: FormBuilder
   ) {}
 
   //a lifecycle hook that is being called once,after the component is being initialized
   ngOnInit(): void {
+    if (!this.authService.currentUser) {
+      this.router.navigateByUrl('/register');
+    }
+
+    this.getFlight();
+  }
+
+  form = this.fb.group({
+    number: [1],
+  });
+
+  getFlight() {
     this.route.paramMap.subscribe({
-      next: (param) => this.findFlight(param.get('flightId')),
+      next: (param) => this.findFlightbyId(param.get('flightId')),
     });
   }
 
-  private findFlight(flightId: string | null) {
+  book() {
+    console.log(
+      `Booking ${this.form.get('number')?.value} passengers ${this.flight.id}`
+    );
+  }
+
+  private findFlightbyId(flightId: string | null) {
     this.flightId = flightId ?? 'not passed';
 
     this.flightService.getFlight({ id: this.flightId }).subscribe({
