@@ -87,12 +87,12 @@ public class FlightController : BaseApiController
 
         public ActionResult BookFlight(BookDto bookDto)
         {
-                System.Diagnostics.Debug.WriteLine($"Booking a new flight {bookDto.FlightId}");
                 var flight = Flights.Any(f => f.Id == bookDto.FlightId);
 
                 if (!flight) return NotFound();
 
                 Bookings.Add(bookDto);
+                System.Diagnostics.Debug.WriteLine($"Booking a new flight {bookDto.FlightId}");
                 return NoContent();
         }
 
