@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { bookFlight } from '../fn/flight/book-flight';
+import { BookFlight$Params } from '../fn/flight/book-flight';
 import { Flight } from '../models/flight';
 import { getFlight } from '../fn/flight/get-flight';
 import { GetFlight$Params } from '../fn/flight/get-flight';
@@ -69,6 +71,31 @@ export class FlightService extends BaseService {
   getFlights(params?: GetFlights$Params, context?: HttpContext): Observable<Array<Flight>> {
     return this.getFlights$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<Flight>>): Array<Flight> => r.body)
+    );
+  }
+
+  /** Path part for operation `bookFlight()` */
+  static readonly BookFlightPath = '/api/Flight';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `bookFlight()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  bookFlight$Response(params?: BookFlight$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return bookFlight(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `bookFlight$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  bookFlight(params?: BookFlight$Params, context?: HttpContext): Observable<void> {
+    return this.bookFlight$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

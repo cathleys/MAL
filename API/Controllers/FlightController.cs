@@ -1,4 +1,5 @@
-﻿using API.Models;
+﻿using API.DTOs;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -10,7 +11,7 @@ public class FlightController : BaseApiController
 {
         static Random random = new Random();
 
-        private static List<Flight> flights = new List<Flight>
+        private static List<Flight> Flights = new List<Flight>
     {
         new (   Guid.NewGuid(),
                 "American Airlines",
@@ -62,22 +63,37 @@ public class FlightController : BaseApiController
                     random.Next(1, 853))
         };
 
-
+        private static IList<BookDto> Bookings = new List<BookDto>();
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Flight>), 200)]
-        public ActionResult<IEnumerable<Flight>> GetFlights() => flights;
+        public ActionResult<IEnumerable<Flight>> GetFlights() => Flights;
 
 
         [HttpGet("{id}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Flight), 200)]
-        public ActionResult<Flight> getFlight(Guid id)
+        public ActionResult<Flight> GetFlight(Guid id)
         {
-                var flight = flights.FirstOrDefault(f => f.Id == id);
+                var flight = Flights.FirstOrDefault(f => f.Id == id);
 
                 if (flight is null) return NotFound();
                 return Ok(flight);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+
+        public ActionResult BookFlight(BookDto bookDto)
+        {
+                System.Diagnostics.Debug.WriteLine($"Booking a new flight {bookDto.FlightId}");
+                var flight = Flights.Any(f => f.Id == bookDto.FlightId);
+
+                if (!flight) return NotFound();
+
+                Bookings.Add(bookDto);
+                return NoContent();
         }
 
 }

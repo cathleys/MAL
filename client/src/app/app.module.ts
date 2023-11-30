@@ -9,6 +9,7 @@ import { SearchFlightsComponent } from './search-flights/search-flights.componen
 import { HttpClientModule } from '@angular/common/http';
 import { BookFlightComponent } from './book-flight/book-flight.component';
 import { RegisterComponent } from './account/register/register.component';
+import { MyBookingsComponent } from './my-bookings/my-bookings.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { RegisterComponent } from './account/register/register.component';
     SearchFlightsComponent,
     BookFlightComponent,
     RegisterComponent,
+    MyBookingsComponent,
   ],
   imports: [
     BrowserModule,
