@@ -1,10 +1,12 @@
-﻿namespace API.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API.Models;
 
 public record AppUser(
     string Id,
-    string Email,
-    string FirstName,
-    string LastName,
-    bool Gender,
-    string Password
+  [Required][Display(Name = "Email Address")][EmailAddress][StringLength(75, MinimumLength = 3)] string Email,
+   [Required] string FirstName,
+   [Required] string LastName,
+    [Required] bool Gender,
+    [Required] string Password
 );
