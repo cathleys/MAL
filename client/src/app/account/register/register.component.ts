@@ -18,15 +18,18 @@ export class RegisterComponent {
   ) {}
 
   form = this.fb.group({
-    email: ['', Validators.required],
+    email: [
+      '',
+      [Validators.required, Validators.minLength(3), Validators.maxLength(75)],
+    ],
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
     password: ['', Validators.required],
-    isFemale: [true],
+    isFemale: [true, Validators.required],
   });
 
   register() {
-    console.log('form values: ', this.form.value);
+    if (this.form.invalid) return;
 
     this.accountService.register({ body: this.form.value }).subscribe({
       next: () => this.login(),

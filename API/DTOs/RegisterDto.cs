@@ -1,9 +1,11 @@
-﻿namespace API.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace API.DTOs;
 
 public record RegisterDto(
-    string Email,
-    string FirstName,
-    string LastName,
-    string Password,
-    bool Gender
+   [Required][Display(Name = "Email Address")][EmailAddress][StringLength(75, MinimumLength = 3)] string Email,
+   [Required] string FirstName,
+   [Required] string LastName,
+    [Required] bool Gender,
+    [Required] string Password
 );
