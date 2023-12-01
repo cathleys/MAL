@@ -1,4 +1,5 @@
-﻿using API.DTOs;
+﻿using API.Data;
+using API.DTOs;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,11 @@ namespace API.Controllers;
 
 public class AccountController : BaseApiController
 {
-    private static IList<AppUser> Passengers = new List<AppUser>();
+    private readonly Entities _entities;
+    public AccountController(Entities entities)
+    {
+        _entities = entities;
+    }
 
     [HttpPost]
     [ProducesResponseType(204)]
@@ -17,8 +22,8 @@ public class AccountController : BaseApiController
         var user = new AppUser(registerDto.Id, registerDto.Email, registerDto.FirstName,
         registerDto.LastName, registerDto.Gender, registerDto.Password);
 
-        Passengers.Add(user);
-        System.Diagnostics.Debug.WriteLine("Passengers count", Passengers.Count);
+        _entities.Passengers.Add(user);
+        System.Diagnostics.Debug.WriteLine("Passengers count", _entities.Passengers.Count);
         return NoContent();
     }
 
@@ -29,7 +34,7 @@ public class AccountController : BaseApiController
     public ActionResult<PassengerDto> GetPassenger(string email)
     {
 
-        var passenger = Passengers.FirstOrDefault(p => p.Email == email);
+        var passenger = _entities.Passengers.FirstOrDefault(p => p.Email == email);
         if (passenger is null) return NotFound();
 
         return new PassengerDto
