@@ -2,8 +2,6 @@
 namespace API.Models;
 
 public record Booking(
-
-   Guid FlightId,
- string EmailAddress,
+  string EmailAddress,
    byte NumberOfSeats
 );
