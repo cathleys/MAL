@@ -55,7 +55,7 @@ export class BookFlightComponent implements OnInit {
 
     this.flightService.bookFlight({ body: booking }).subscribe({
       next: () => this.router.navigateByUrl('/my-booking'),
-      error: () => this.handleError,
+      error: this.handleError,
     });
   }
 
@@ -73,9 +73,13 @@ export class BookFlightComponent implements OnInit {
   }
 
   private handleError = (err: any) => {
-    if (err.status !== null) {
+    if (err.status === 404 ) {
       alert('something went wrong');
       this.router.navigateByUrl('/');
+      
+    }
+    if(err.status === 409){
+      alert(JSON.parse(err.error).message)
     }
     console.log('Response Error. Status: ', err.status);
     console.log('Response Error. Status Text: ', err.statusText);

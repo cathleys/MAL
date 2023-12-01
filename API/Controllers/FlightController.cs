@@ -1,9 +1,13 @@
 ﻿using API.DTOs;
 using API.Models;
+using API.Models.Errors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
+//NOTE: 
+// DTOs/ Read Models / View Models - for transferring information
+// Models/Entities -for storing data into database
 
 [ProducesResponseType(400)]
 [ProducesResponseType(500)]
@@ -18,7 +22,7 @@ public class FlightController : BaseApiController
                 random.Next(90, 5000).ToString(),
                 new TimePlace("Los Angeles",DateTime.Now.AddHours(random.Next(1, 3))),
                 new TimePlace("Istanbul",DateTime.Now.AddHours(random.Next(4, 10))),
-                    random.Next(1, 853)),
+                    5),
         new (   Guid.NewGuid(),
                 "Deutsche BA",
                 random.Next(90, 5000).ToString(),
@@ -63,22 +67,43 @@ public class FlightController : BaseApiController
                     random.Next(1, 853))
         };
 
-        private static IList<BookDto> Bookings = new List<BookDto>();
+
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Flight>), 200)]
-        public ActionResult<IEnumerable<Flight>> GetFlights() => Flights;
+        [ProducesResponseType(typeof(IEnumerable<FlightDto>), 200)]
+        public ActionResult<IEnumerable<FlightDto>> GetFlights()
+        {
+                var flights = Flights.Select(flight => new FlightDto(
+                        flight.Id,
+                        flight.Airline,
+                        flight.Price,
+                        new TimePlaceDto(flight.Departure.Place.ToString(), flight.Departure.Time),
+                        new TimePlaceDto(flight.Arrival.Place.ToString(), flight.Arrival.Time),
+                        flight.RemainingNumberOfSeats
+                )).ToList();
+
+                return flights;
+        }
 
 
         [HttpGet("{id}")]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Flight), 200)]
-        public ActionResult<Flight> GetFlight(Guid id)
+        public ActionResult<FlightDto> GetFlight(Guid id)
         {
                 var flight = Flights.FirstOrDefault(f => f.Id == id);
 
                 if (flight is null) return NotFound();
-                return Ok(flight);
+
+                var flightDto = new FlightDto(
+                        flight.Id,
+                        flight.Airline,
+                        flight.Price,
+                        new TimePlaceDto(flight.Departure.Place.ToString(), flight.Departure.Time),
+                        new TimePlaceDto(flight.Arrival.Place.ToString(), flight.Arrival.Time),
+                        flight.RemainingNumberOfSeats
+                );
+                return Ok(flightDto);
         }
 
         [HttpPost]
@@ -87,11 +112,14 @@ public class FlightController : BaseApiController
 
         public ActionResult BookFlight(BookDto bookDto)
         {
-                var flight = Flights.Any(f => f.Id == bookDto.FlightId);
+                var flight = Flights.FirstOrDefault(f => f.Id == bookDto.FlightId);
 
-                if (!flight) return NotFound();
+                if (flight is null) return NotFound();
 
-                Bookings.Add(bookDto);
+                var error = flight.MakeBooking(bookDto.EmailAddress, bookDto.NumberOfSeats);
+
+                if (error is OverbookError) return Conflict(new { message = "Not enough seats" });
+
                 System.Diagnostics.Debug.WriteLine($"Booking a new flight {bookDto.FlightId}");
                 return NoContent();
         }

@@ -6,15 +6,18 @@ namespace API.Controllers;
 
 public class AccountController : BaseApiController
 {
-    private static IList<RegisterDto> Passengers = new List<RegisterDto>();
+    private static IList<AppUser> Passengers = new List<AppUser>();
 
     [HttpPost]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public IActionResult Register(RegisterDto registerDto)
+    public ActionResult<AppUser> Register(RegisterDto registerDto)
     {
-        Passengers.Add(registerDto);
+        var user = new AppUser(registerDto.Id, registerDto.Email, registerDto.FirstName,
+        registerDto.LastName, registerDto.Gender, registerDto.Password);
+
+        Passengers.Add(user);
         System.Diagnostics.Debug.WriteLine("Passengers count", Passengers.Count);
         return NoContent();
     }
