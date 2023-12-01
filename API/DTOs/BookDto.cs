@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.Filters;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace API.DTOs;
 

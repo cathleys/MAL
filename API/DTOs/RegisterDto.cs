@@ -3,6 +3,7 @@
 namespace API.DTOs;
 
 public record RegisterDto(
+    string Id,
    [Required][Display(Name = "Email Address")][EmailAddress][StringLength(75, MinimumLength = 3)] string Email,
    [Required] string FirstName,
    [Required] string LastName,
