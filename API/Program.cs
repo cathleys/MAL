@@ -1,5 +1,6 @@
 using API.Data;
 using API.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+builder.Services.AddDbContext<Entities>(opt => opt.UseInMemoryDatabase
+(databaseName: "Flights"), ServiceLifetime.Singleton);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -79,6 +82,7 @@ var seedflights = new List<Flight>{
 };
 
 entities.Flights.AddRange(seedflights);
+entities.SaveChanges();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -86,6 +90,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseCors(builder => builder.AllowAnyHeader()
 .AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200"));
 

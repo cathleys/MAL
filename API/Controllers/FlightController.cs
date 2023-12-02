@@ -71,6 +71,8 @@ public class FlightController : BaseApiController
 
                 if (error is OverbookError) return Conflict(new { message = "Not enough seats" });
 
+                _entities.SaveChanges();
+
                 System.Diagnostics.Debug.WriteLine($"Booking a new flight {bookDto.FlightId}");
                 return NoContent();
         }

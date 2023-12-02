@@ -23,7 +23,8 @@ public class AccountController : BaseApiController
         registerDto.LastName, registerDto.Gender, registerDto.Password);
 
         _entities.Passengers.Add(user);
-        System.Diagnostics.Debug.WriteLine("Passengers count", _entities.Passengers.Count);
+        _entities.SaveChanges();
+
         return NoContent();
     }
 
@@ -36,6 +37,7 @@ public class AccountController : BaseApiController
 
         var passenger = _entities.Passengers.FirstOrDefault(p => p.Email == email);
         if (passenger is null) return NotFound();
+
 
         return new PassengerDto
         {
