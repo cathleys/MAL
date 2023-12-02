@@ -18,6 +18,9 @@ public class Entities : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<AppUser>().HasKey(a => a.Email);
+        //to avoid overbooking 
+        modelBuilder.Entity<Flight>().Property(f => f.RemainingNumberOfSeats)
+        .IsConcurrencyToken();
 
         modelBuilder.Entity<Flight>().OwnsOne(f => f.Departure);
         modelBuilder.Entity<Flight>().OwnsOne(f => f.Arrival);
