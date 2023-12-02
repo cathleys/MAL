@@ -3,6 +3,7 @@ using API.DTOs;
 using API.Models;
 using API.Models.Errors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
@@ -69,9 +70,19 @@ public class FlightController : BaseApiController
 
                 var error = flight.MakeBooking(bookDto.EmailAddress, bookDto.NumberOfSeats);
 
-                if (error is OverbookError) return Conflict(new { message = "Not enough seats" });
+                if (error is OverbookError)
+                        return Conflict(new { message = "Not enough seats" });
 
-                _entities.SaveChanges();
+
+                try
+                {
+                        _entities.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                        return Conflict(new { message = "An error occured" });
+
+                }
 
                 System.Diagnostics.Debug.WriteLine($"Booking a new flight {bookDto.FlightId}");
                 return NoContent();
