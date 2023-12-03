@@ -12,6 +12,7 @@ import { StrictHttpResponse } from '../strict-http-response';
 import { bookFlight } from '../fn/flight/book-flight';
 import { BookFlight$Params } from '../fn/flight/book-flight';
 import { Flight } from '../models/flight';
+import { FlightDto } from '../models/flight-dto';
 import { getFlight } from '../fn/flight/get-flight';
 import { GetFlight$Params } from '../fn/flight/get-flight';
 import { getFlight$Plain } from '../fn/flight/get-flight-plain';
@@ -36,7 +37,7 @@ export class FlightService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getFlights$Plain$Response(params?: GetFlights$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Flight>>> {
+  getFlights$Plain$Response(params?: GetFlights$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FlightDto>>> {
     return getFlights$Plain(this.http, this.rootUrl, params, context);
   }
 
@@ -46,9 +47,9 @@ export class FlightService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getFlights$Plain(params?: GetFlights$Plain$Params, context?: HttpContext): Observable<Array<Flight>> {
+  getFlights$Plain(params?: GetFlights$Plain$Params, context?: HttpContext): Observable<Array<FlightDto>> {
     return this.getFlights$Plain$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Flight>>): Array<Flight> => r.body)
+      map((r: StrictHttpResponse<Array<FlightDto>>): Array<FlightDto> => r.body)
     );
   }
 
@@ -58,7 +59,7 @@ export class FlightService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getFlights$Response(params?: GetFlights$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<Flight>>> {
+  getFlights$Response(params?: GetFlights$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FlightDto>>> {
     return getFlights(this.http, this.rootUrl, params, context);
   }
 
@@ -68,9 +69,9 @@ export class FlightService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  getFlights(params?: GetFlights$Params, context?: HttpContext): Observable<Array<Flight>> {
+  getFlights(params?: GetFlights$Params, context?: HttpContext): Observable<Array<FlightDto>> {
     return this.getFlights$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<Flight>>): Array<Flight> => r.body)
+      map((r: StrictHttpResponse<Array<FlightDto>>): Array<FlightDto> => r.body)
     );
   }
 

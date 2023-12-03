@@ -6,14 +6,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { FlightDto } from '../../models/flight-dto';
+import { BookingDto } from '../../models/booking-dto';
 
-export interface GetFlights$Plain$Params {
+export interface GetAllBookings$Plain$Params {
+  email: string;
 }
 
-export function getFlights$Plain(http: HttpClient, rootUrl: string, params?: GetFlights$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FlightDto>>> {
-  const rb = new RequestBuilder(rootUrl, getFlights$Plain.PATH, 'get');
+export function getAllBookings$Plain(http: HttpClient, rootUrl: string, params: GetAllBookings$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<BookingDto>>> {
+  const rb = new RequestBuilder(rootUrl, getAllBookings$Plain.PATH, 'get');
   if (params) {
+    rb.path('email', params.email, {"style":"simple"});
   }
 
   return http.request(
@@ -21,9 +23,9 @@ export function getFlights$Plain(http: HttpClient, rootUrl: string, params?: Get
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<Array<FlightDto>>;
+      return r as StrictHttpResponse<Array<BookingDto>>;
     })
   );
 }
 
-getFlights$Plain.PATH = '/api/Flight';
+getAllBookings$Plain.PATH = '/api/Booking/{email}';
