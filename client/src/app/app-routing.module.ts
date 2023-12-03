@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: 'get-flights', component: SearchFlightsComponent },
   { path: 'book-flight/:flightId', component: BookFlightComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'my-booking', component: MyBookingsComponent },
+  { path: 'my-bookings', component: MyBookingsComponent },
   { path: '**', component: SearchFlightsComponent, pathMatch: 'full' },
 ];
 
