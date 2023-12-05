@@ -1,21 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AccountService } from 'src/app/api/services';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService, User } from 'src/app/_auth/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
+  requestedUrl?: string = undefined;
+
   constructor(
     private accountService: AccountService,
     private authService: AuthService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute
   ) {}
+
+  ngOnInit(): void {
+    this.activatedRoute.params.subscribe(
+      (p) => (this.requestedUrl = p['requestedUrl'])
+    );
+  }
 
   form = this.fb.group({
     email: [
@@ -32,7 +41,7 @@ export class RegisterComponent {
     if (this.form.invalid) return;
 
     this.accountService.register({ body: this.form.value }).subscribe({
-      next: () => this.login(),
+      next: () => this.login,
       error: (error) => console.error(error),
     });
   }
@@ -59,6 +68,6 @@ export class RegisterComponent {
 
     if (emailValue) this.authService.loginUser({ email: emailValue });
 
-    this.router.navigateByUrl('/');
+    this.router.navigate([this.requestedUrl ?? '/']);
   }
 }
