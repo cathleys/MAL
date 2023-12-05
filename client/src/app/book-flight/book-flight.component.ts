@@ -25,10 +25,6 @@ export class BookFlightComponent implements OnInit {
 
   //a lifecycle hook that is being called once,after the component is being initialized
   ngOnInit(): void {
-    if (!this.authService.currentUser) {
-      this.router.navigateByUrl('/register');
-    }
-
     this.getFlight();
   }
 
@@ -73,13 +69,12 @@ export class BookFlightComponent implements OnInit {
   }
 
   private handleError = (err: any) => {
-    if (err.status === 404 ) {
+    if (err.status === 404) {
       alert('something went wrong');
       this.router.navigateByUrl('/');
-      
     }
-    if(err.status === 409){
-      alert(JSON.parse(err.error).message)
+    if (err.status === 409) {
+      alert(JSON.parse(err.error).message);
     }
     console.log('Response Error. Status: ', err.status);
     console.log('Response Error. Status Text: ', err.statusText);

@@ -25,7 +25,7 @@ export class MyBookingsComponent implements OnInit {
   getBookings() {
     const email = this.authService.currentUser?.email;
 
-    if (!email) return this.router.navigateByUrl('/register');
+    if (!email) return;
     this.bookingService.getAllBookings({ email: email }).subscribe({
       next: (response) => {
         this.bookings = response;
