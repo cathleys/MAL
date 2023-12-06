@@ -15,6 +15,7 @@ builder.Services.AddDbContext<Entities>(opt => opt.UseInMemoryDatabase
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.DescribeAllParametersInCamelCase();
     c.AddServer(new OpenApiServer
     {
         Description = "Development Server",

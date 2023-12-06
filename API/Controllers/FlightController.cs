@@ -15,17 +15,44 @@ namespace API.Controllers;
 [ProducesResponseType(500)]
 public class FlightController : BaseApiController
 {
+        private readonly ILogger<FlightController> _logger;
         private readonly Entities _entities;
-        public FlightController(Entities entities)
+        public FlightController(ILogger<FlightController> logger, Entities entities)
         {
+                _logger = logger;
                 _entities = entities;
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FlightDto>), 200)]
-        public ActionResult<IEnumerable<FlightDto>> GetFlights()
+        public ActionResult<IEnumerable<FlightDto>> GetFlights([FromQuery] FlightSearchParam fsParams)
         {
-                var flights = _entities.Flights.Select(flight => new FlightDto(
+
+                _logger.LogInformation("Searching for a flight for: {Destination}", fsParams.Destination);
+
+                IQueryable<Flight> flights = _entities.Flights;
+
+                if (!string.IsNullOrEmpty(fsParams.Destination))
+                        flights = flights.Where(f => f.Arrival.Place.Contains(fsParams.Destination));
+
+                if (!string.IsNullOrEmpty(fsParams.From))
+                        flights = flights.Where(f => f.Departure.Place.Contains(fsParams.From));
+
+                if (fsParams.FromDate is not null)
+                        flights = flights.Where(f => f.Departure.Time >= fsParams.FromDate.Value.Date);
+
+                if (fsParams.ToDate is not null)
+                        flights = flights.Where(f => f.Departure.Time <= fsParams.ToDate.Value.Date.AddDays(1).AddTicks(-1));
+
+
+                if (fsParams.NumberOfPassengers != 0)
+                        //do not return those fully booked flights already
+                        flights = flights.Where(f => f.RemainingNumberOfSeats >= fsParams.NumberOfPassengers);
+                else
+                        flights = flights.Where(f => f.RemainingNumberOfSeats >= 1);
+
+                var flightDtos = flights
+                .Select(flight => new FlightDto(
                         flight.Id,
                         flight.Airline,
                         flight.Price,
@@ -34,7 +61,7 @@ public class FlightController : BaseApiController
                         flight.RemainingNumberOfSeats
                 )).ToList();
 
-                return flights;
+                return Ok(flightDtos);
         }
 
 
@@ -78,7 +105,7 @@ public class FlightController : BaseApiController
                 {
                         _entities.SaveChanges();
                 }
-                catch (DbUpdateConcurrencyException ex)
+                catch (DbUpdateConcurrencyException)
                 {
                         return Conflict(new { message = "An error occured" });
 
