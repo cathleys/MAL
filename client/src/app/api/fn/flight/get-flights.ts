@@ -9,11 +9,21 @@ import { RequestBuilder } from '../../request-builder';
 import { FlightDto } from '../../models/flight-dto';
 
 export interface GetFlights$Params {
+  from?: string;
+  destination?: string;
+  fromDate?: string;
+  toDate?: string;
+  numberOfPassengers?: number;
 }
 
 export function getFlights(http: HttpClient, rootUrl: string, params?: GetFlights$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<FlightDto>>> {
   const rb = new RequestBuilder(rootUrl, getFlights.PATH, 'get');
   if (params) {
+    rb.query('from', params.from, {"style":"form"});
+    rb.query('destination', params.destination, {"style":"form"});
+    rb.query('fromDate', params.fromDate, {"style":"form"});
+    rb.query('toDate', params.toDate, {"style":"form"});
+    rb.query('numberOfPassengers', params.numberOfPassengers, {"style":"form"});
   }
 
   return http.request(
